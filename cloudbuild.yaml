@@ -1,25 +1,12 @@
 options:
   logging: CLOUD_LOGGING_ONLY 
-
 steps:
+  # Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/testing-dep-471617/etl-service', '.']
-
+  
+  # Push to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/testing-dep-471617/etl-service']
-
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args:
-      - 'run'
-      - 'deploy'
-      - 'etl-service'
-      - '--image'
-      - 'gcr.io/testing-dep-471617/etl-service'
-      - '--region'
-      - 'asia-south1'
-      - '--platform'
-      - 'managed'
-      - '--allow-unauthenticated'
 
 timeout: 1200s
