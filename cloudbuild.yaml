@@ -1,12 +1,23 @@
 options:
-  logging: CLOUD_LOGGING_ONLY 
-steps:
-  # Build the Docker image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/testing-dep-471617/etl-service', '.']
-  
-  # Push to Container Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/testing-dep-471617/etl-service']
+  logging: CLOUD_LOGGING_ONLY
+  env:
+    - 'COMPOSER_NAME=etl-composer'
+    - 'COMPOSER_LOCATION=asia-south1'
 
-timeout: 1200s
+steps:
+  # Sync DAGs to Composer bucket
+  - name: 'gcr.io/cloud-builders/gcloud'
+    script: |
+      #!/bin/bash
+      echo "Syncing DAGs to Composer..."
+      DAG_BUCKET=$(gcloud composer environments describe $COMPOSER_NAME \
+        --location $COMPOSER_LOCATION \
+        --format='value(config.dagGcsPrefix)')
+      
+      echo "Target bucket: $DAG_BUCKET"
+      gcloud storage rsync -r -J --delete-unmatched-destination-objects \
+        dags/ $DAG_BUCKET
+      
+      echo "✅ DAGs synced successfully!"
+
+timeout: 600s
