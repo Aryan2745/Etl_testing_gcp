@@ -3,5 +3,5 @@ sqlalchemy
 requests
 google-cloud-secret-manager
 google-cloud-bigquery
-google-auth
+google-auth 
 
