@@ -1,7 +1,7 @@
 options:
   logging: CLOUD_LOGGING_ONLY
   env:
-    - 'COMPOSER_NAME=etl-composer'
+    - 'COMPOSER_NAME=etl-composer' 
     - 'COMPOSER_LOCATION=asia-south1'
 
 steps:
